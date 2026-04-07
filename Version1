@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI4HSE — AI-Native HSE Intelligence Layer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #05040d;
+      --bg-alt: #0b0618;
+      --bg-soft: #120b26;
+      --accent: #8b5cff;
+      --accent2: #c084fc;
+      --success: #3dd68c;
+      --text: #f7f4ff;
+      --muted: #a8a2c0;
+      --border: #241b3f;
+      --radius: 14px;
+      --max-width: 1120px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1a1038 0, #05040d 60%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Layout */
+    .page { min-height: 100vh; display: flex; flex-direction: column; }
+    section { padding: 70px 20px; }
+    .inner { max-width: var(--max-width); margin: 0 auto; }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to bottom, rgba(5,4,13,0.96), rgba(5,4,13,0.75));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      background: conic-gradient(from 210deg, #8b5cff, #c084fc, #7dd3ff, #8b5cff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.12);
+      font-size: 15px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .nav-links a {
+      position: relative;
+      padding: 4px 0;
+    }
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.18s ease-out;
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 14px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s ease-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .btn-outline {
+      border-color: rgba(255,255,255,0.18);
+      color: var(--muted);
+    }
+    .btn-outline:hover {
+      border-color: rgba(255,255,255,0.4);
+      color: var(--text);
+      background: rgba(255,255,255,0.02);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 26px rgba(139,92,255,0.55);
+      border: none;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(139,92,255,0.7);
+    }
+
+    /* Hero */
+    .hero {
+      padding-top: 80px;
+      padding-bottom: 70px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr);
+      gap: 40px;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(139,92,255,0.12);
+      border: 1px solid rgba(192,132,252,0.5);
+      color: #e9ddff;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 14px;
+    }
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(61,214,140,0.25);
+    }
+    .hero-title {
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .hero-title span {
+      background: linear-gradient(120deg, #8b5cff, #c084fc, #7dd3ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 540px;
+      margin-bottom: 22px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .hero-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .hero-card {
+      border-radius: 20px;
+      background: radial-gradient(circle at top left, #261a4b 0, #0b0618 55%);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 20px 18px 18px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(192,132,252,0.22), transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(139,92,255,0.2), transparent 55%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+    .hero-card-inner { position: relative; z-index: 1; }
+    .hero-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .hero-card-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      min-width: 110px;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-top: 2px;
+    }
+    .hero-card-footer {
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    /* Section headings */
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+    .section-lead {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 640px;
+    }
+
+    /* Why / Problem */
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 26px;
+      margin-top: 26px;
+    }
+    .card {
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .card-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+    }
+    .card-body {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .card-list {
+      margin-top: 10px;
+      list-style: none;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .card-list li {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .bullet {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      margin-top: 7px;
+      background: rgba(255,255,255,0.5);
+    }
+    .bullet-accent { background: var(--accent2); }
+
+    /* Feature grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .feature {
+      border-radius: 16px;
+      padding: 16px 14px 14px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .feature-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .feature-body {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Industries pills */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(18,11,38,0.9);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+    }
+
+    /* Quote */
+    .quote {
+      border-radius: 20px;
+      padding: 20px 20px 18px;
+      background: radial-gradient(circle at top left, rgba(139,92,255,0.22), #05040d 55%);
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-top: 26px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.7);
+    }
+    .quote-text {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .quote-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* CTA + contact */
+    .cta-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 26px;
+      margin-top: 26px;
+    }
+    .cta-card {
+      border-radius: 18px;
+      padding: 20px 18px 18px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+    }
+    .cta-title {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .cta-body {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 14px;
+      margin-top: 8px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+    .field label {
+      color: var(--muted);
+    }
+    .field input,
+    .field textarea {
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(11,6,24,0.95);
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.16s ease-out, box-shadow 0.16s ease-out;
+    }
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(139,92,255,0.5);
+    }
+    .field textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .field-full { grid-column: 1 / -1; }
+
+    .form-footer {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 18px 20px 26px;
+      background: #05040d;
+    }
+    .footer-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .two-col,
+      .feature-grid,
+      .cta-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .hero {
+        padding-top: 60px;
+      }
+      .hero-title {
+        font-size: 32px;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .feature-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      form {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .hero-card {
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="nav">
+      <div class="logo">
+        <div class="logo-mark">A4</div>
+        <span>AI4HSE</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#why">Why AI4HSE</a>
+        <a href="#platform">Intelligence Layer</a>
+        <a href="#modules">Modules</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="nav-cta">
+        <button class="btn-outline" onclick="scrollToId('contact')">Contact</button>
+        <button class="btn-primary" onclick="scrollToId('contact')">Request Demo →</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="inner hero-grid">
+        <div>
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            AI-Native HSE Intelligence Layer
+          </div>
+          <h1 class="hero-title">
+            Real-time intelligence for<br />
+            <span>HSE, risk & ESG at scale</span>
+          </h1>
+          <p class="hero-sub">
+            AI4HSE sits above your operations as an intelligence layer — unifying HSE, risk, ESG,
+            compliance, and field data into one live view of operational reality. Built for Oil & Gas,
+            Utilities, Mining, Manufacturing, Aviation, and giga‑projects across the Middle East.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="scrollToId('contact')">
+              Request a Live Demo →
+            </button>
+            <button class="btn-outline" onclick="scrollToId('platform')">
+              Explore the Intelligence Layer
+            </button>
+          </div>
+          <p class="hero-note">
+            Designed from 14+ years of real-world HSE transformation — not from a slide deck.
+          </p>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-card-inner">
+            <div class="hero-card-title">Live Operational Risk Posture</div>
+            <div class="hero-card-sub">
+              AI4HSE continuously ingests incidents, inspections, permits, and ESG data to surface
+              where your next serious event is most likely to occur.
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat">
+                <div class="stat-value">92%</div>
+                <div class="stat-label">Critical controls healthy</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">↓ 37%</div>
+                <div class="stat-label">Incidents YoY</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">98.4%</div>
+                <div class="stat-label">Compliance on-time</div>
+              </div>
+            </div>
+
+            <div class="hero-card-footer">
+              Every insight is traceable back to source data — no black-box AI, no manual reconciliation.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why -->
+    <section id="why">
+      <div class="inner">
+        <div class="section-label">Why AI4HSE</div>
+        <h2 class="section-title">Legacy HSE systems weren’t built as intelligence layers.</h2>
+        <p class="section-lead">
+          Most HSE and GRC platforms grew through acquisitions — multiple products stitched together with APIs,
+          inconsistent workflows, and fragmented data. They record events, but they don’t truly understand them.
+          AI4HSE is different: it’s an AI-native intelligence layer designed to interpret, connect, and predict.
+        </p>
+
+        <div class="pill-row">
+          <span class="pill">Oil & Gas</span>
+          <span class="pill">Utilities</span>
+          <span class="pill">Mining</span>
+          <span class="pill">Manufacturing</span>
+          <span class="pill">Aviation</span>
+          <span class="pill">Giga‑projects</span>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">The fragmented HSE stack</div>
+              <span class="card-tag">Yesterday’s reality</span>
+            </div>
+            <div class="card-body">
+              Separate tools for incidents, audits, risk, ESG, and permits — each with its own data model,
+              workflows, and reports. You spend more time reconciling than improving safety.
+            </div>
+            <ul class="card-list">
+              <li>
+                <span class="bullet"></span>
+                <span>Multiple vendors, overlapping modules, and duplicated data.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span>APIs and spreadsheets holding everything together.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span>Lagging indicators, static dashboards, and manual analysis.</span>
+              </li>
+              <li>
+                <span class="bullet"></span>
+                <span>Upgrades and changes are slow, risky, and expensive.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">AI4HSE: the intelligence layer</div>
+              <span class="card-tag">Designed for now</span>
+            </div>
+            <div class="card-body">
+              AI4HSE doesn’t replace every system on day one — it connects, interprets, and elevates them.
+              It becomes the live, AI-native brain for your HSE, risk, and ESG ecosystem.
+            </div>
+            <ul class="card-list">
+              <li>
+                <span class="bullet bullet-accent"></span>
+                <span>Unifies incidents, inspections, PTW, risk, and ESG into one model.</span>
+              </li>
+              <li>
+                <span class="bullet bullet-accent"></span>
+                <span>Surfaces leading indicators and emerging patterns in real time.</span>
+              </li>
+              <li>
+                <span class="bullet bullet-accent"></span>
+                <span>Embeds AI into workflows — not as a chatbot bolted on the side.</span>
+              </li>
+              <li>
+                <span class="bullet bullet-accent"></span>
+                <span>Built for Middle East scale, regulation, and complexity.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Platform / Intelligence Layer -->
+    <section id="platform">
+      <div class="inner">
+        <div class="section-label">Intelligence layer</div>
+        <h2 class="section-title">One AI-native layer across HSE, risk, ESG & compliance.</h2>
+        <p class="section-lead">
+          AI4HSE ingests data from your existing systems — incident management, PTW, ERP, ESG tools — and
+          transforms it into a single, coherent intelligence layer. Every module shares the same data model,
+          AI engine, and security framework.
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="feature-label">Risk</div>
+            <div class="feature-title">Unified risk intelligence</div>
+            <p class="feature-body">
+              Bowtie, JSA/JHA, enterprise risk, and environmental aspects/impacts connected to real incidents,
+              controls, and actions — not just static registers.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Signals</div>
+            <div class="feature-title">Leading indicator engine</div>
+            <p class="feature-body">
+              AI models detect weak signals across near misses, unsafe acts, overdue actions, and permit data
+              to highlight where serious events are most likely to emerge.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Context</div>
+            <div class="feature-title">Operational context graph</div>
+            <p class="feature-body">
+              Assets, locations, contractors, activities, and people linked into a graph — so AI4HSE understands
+              not just what happened, but where, how, and to whom.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">AI</div>
+            <div class="feature-title">Explainable AI insights</div>
+            <p class="feature-body">
+              Every recommendation is backed by traceable evidence — source events, controls, and trends —
+              giving HSE leaders confidence to act.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Security</div>
+            <div class="feature-title">Enterprise-grade controls</div>
+            <p class="feature-body">
+              SSO, role-based access, data residency options, and audit trails designed for regulated,
+              safety-critical environments.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Middle East</div>
+            <div class="feature-title">Built for regional realities</div>
+            <p class="feature-body">
+              Supports Arabic/English, regional regulations, and giga‑project scale — aligned with the
+              transformation agendas of GCC governments and national champions.
+            </p>
+          </div>
+        </div>
+
+        <div class="quote">
+          <p class="quote-text">
+            “AI4HSE is the intelligence layer we wished existed while implementing HSE and GRC platforms
+            across Oil & Gas, Utilities, Mining, and giga‑projects. It doesn’t just digitize forms —
+            it understands risk, context, and consequence.”
+          </p>
+          <div class="quote-meta">
+            Founder, AI4HSE — Built from 14+ years of real-world implementations.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modules -->
+    <section id="modules">
+      <div class="inner">
+        <div class="section-label">Modules</div>
+        <h2 class="section-title">Modules tuned for high-risk, asset-intensive operations.</h2>
+        <p class="section-lead">
+          Start with the intelligence layer, then activate the modules that matter most. AI4HSE can sit
+          alongside your existing stack or gradually replace legacy tools.
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="feature-label">Incidents</div>
+            <div class="feature-title">Multi-consequence incident intelligence</div>
+            <p class="feature-body">
+              Capture near misses, injuries, environmental events, process safety incidents, and regulatory
+              reports — with AI-driven pattern detection across sites and contractors.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Field</div>
+            <div class="feature-title">Inspections & audits</div>
+            <p class="feature-body">
+              Mobile-first inspections, QR-code assets, and audit programs that feed directly into the
+              intelligence layer — no more dead checklists.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Operations</div>
+            <div class="feature-title">Permit to Work & LOTO</div>
+            <p class="feature-body">
+              Integrated PTW and isolation workflows, linked to risk assessments, controls, and historical
+              incidents — so permits become a live risk control, not a form.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Contractors</div>
+            <div class="feature-title">Contractor safety intelligence</div>
+            <p class="feature-body">
+              Track contractor performance, leading indicators, and recurring patterns across projects,
+              companies, and regions — with AI-driven risk scoring.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">ESG</div>
+            <div class="feature-title">Operational ESG & emissions</div>
+            <p class="feature-body">
+              Scope 1, 2, and 3 emissions at asset level, linked to operational data and HSE events —
+              aligned with SASB, TCFD, GRI, and regional disclosure requirements.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="feature-label">Analytics</div>
+            <div class="feature-title">Executive & board reporting</div>
+            <p class="feature-body">
+              Curated views for HSE Directors, COOs, and Boards — translating complex operational data
+              into clear, decision-ready narratives.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA & Contact -->
+    <section id="contact">
+      <div class="inner">
+        <div class="section-label">Get a demo</div>
+        <div class="cta-grid">
+          <div class="cta-card">
+            <h2 class="cta-title">See AI4HSE in action.</h2>
+            <p class="cta-body">
+              In a 45-minute session, we’ll walk through how AI4HSE becomes your HSE intelligence layer —
+              connecting incidents, inspections, PTW, risk, and ESG into one live view of operational risk.
+            </p>
+            <ul class="card-list">
+              <li>
+                <span class="bullet bullet-accent"></span>
+                <span>Map AI4HSE to your current tools, data, and pain points.</span>
+              </li>
+              <li>
+                <span class="bullet bullet-accent"></span>
+                <span>See real examples of leading indicators and predictive insights.</span>
+              </li>
+              <li>
+                <span class="bullet bullet-accent"></span>
+                <span>Discuss deployment options for GCC, KSA, and global operations.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="cta-card">
+            <h3 style="font-size:16px;margin-bottom:6px;">Request a demo</h3>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:10px;">
+              Share a few details and we’ll reach out with available times.
+            </p>
+            <form onsubmit="event.preventDefault(); alert('Form submitted. Connect this to your backend or CRM.');">
+              <div class="field">
+                <label for="firstName">First name *</label>
+                <input id="firstName" type="text" required />
+              </div>
+              <div class="field">
+                <label for="lastName">Last name *</label>
+                <input id="lastName" type="text" required />
+              </div>
+              <div class="field">
+                <label for="email">Work email *</label>
+                <input id="email" type="email" required />
+              </div>
+              <div class="field">
+                <label for="company">Company *</label>
+                <input id="company" type="text" required />
+              </div>
+              <div class="field">
+                <label for="role">Role / Title</label>
+                <input id="role" type="text" />
+              </div>
+              <div class="field">
+                <label for="region">Region</label>
+                <input id="region" type="text" placeholder="e.g., KSA, UAE, Qatar" />
+              </div>
+              <div class="field field-full">
+                <label for="message">Context (optional)</label>
+                <textarea id="message" placeholder="Current tools, key challenges, timelines…"></textarea>
+              </div>
+              <div class="form-footer">
+                <button class="btn-primary" type="submit">
+                  Request Demo →
+                </button>
+                <span>Or email us directly: <strong>contact@ai4hse.com</strong></span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>© 2026 AI4HSE. All rights reserved — AI-native HSE intelligence layer.</div>
+      <div class="footer-links">
+        <a href="#why">Why AI4HSE</a>
+        <a href="#platform">Intelligence Layer</a>
+        <a href="#modules">Modules</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  function scrollToId(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    window.scrollTo({
+      top: el.getBoundingClientRect().top + window.scrollY - 80,
+      behavior: 'smooth'
+    });
+  }
+</script>
+</body>
+</html>
